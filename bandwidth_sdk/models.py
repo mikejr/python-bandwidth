@@ -1020,7 +1020,7 @@ class PhoneNumber(ListResource):
         super(PhoneNumber, self).set_up(data)
 
     @classmethod
-    def list(cls, page=0, size=25):
+    def list(cls, page=0, size=25, **params):
         """
         Gets a list of your numbers.
 
@@ -1035,7 +1035,8 @@ class PhoneNumber(ListResource):
         """
         client = get_client()
         data = client.get(cls._path, params=to_api(dict(page=page,
-                                                        size=size))).json()
+                                                        size=size,
+                                                        **params))).json()
         return [cls(number) for number in data]
 
     @classmethod

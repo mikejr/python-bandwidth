@@ -11,6 +11,7 @@ from bandwidth_sdk import (Call, Bridge,
 from datetime import datetime
 from .utils import SdkTestCase
 from six.moves.urllib.parse import parse_qsl, urlsplit
+import urlparse
 
 
 def assertJsonEq(first, second, msg='Ouups'):
@@ -2470,6 +2471,18 @@ class PhoneNumberTest(SdkTestCase):
         self.assertEqual(numbers[1].price, '0.60')
         self.assertEqual(numbers[1].state, 'NC')
         self.assertIsInstance(numbers[1].created_time, datetime)
+
+    @responses.activate
+    def test_phone_number_list_params(self):
+        responses.add(responses.GET,
+                      'https://api.catapult.inetwork.com/v1/users/u-user/phoneNumbers',
+                      body='[]',
+                      status=200,
+                      content_type='application/json')
+        numbers = PhoneNumber.list(applicationId='a-j322')
+        params = urlparse.parse_qs(
+            urlparse.urlparse(responses.calls[0].request.url).query)
+        self.assertEqual(params['applicationId'][0], 'a-j322')
 
     @responses.activate
     def test_page_iterator(self):
